@@ -12,12 +12,19 @@
   Node.prototype.neighborNodes = function() {
   	var nodes = [];
   	this.edges.forEach(function(edge) {
-  		edge.nodes.forEach(function(node) {
+      if ( !edge.directed ) {
+  		  edge.nodes.forEach(function(node) {
   			if ( node !== this ) {
-  				nodes.push(node)
+  				nodes.push(node);
   			}
-  		}, this)
+      }, this)
+      } else {
+        if ( edge.nodes[1] !== this ) {
+          nodes.push(edge.nodes[1]);
+        }
+      }
   	}, this)
   
   	return nodes;
   };
+})();

@@ -4,24 +4,57 @@
   	window.JSAlgorithms = {};
   }
 
-  var Graph = JSAlgorithms.Graph = function() {
+  var Graph = JSAlgorithms.Graph = function(options) {
   	this.nodes = [];
   	this.edges = [];
-  	this.nodeSize = this.nodes.length;
-  	this.edgeSize = this.edges.length;
+    var options = options || {}
+    this.directed =  options.directed || false;
   };
 
-  var Edge = JSAlgorithms.Edge = function(node1, node2) {
-  	this.nodes = [ node1, node2 ];
+  Graph.prototype.nodeSize =  function() {
+    return this.nodes.length;
   };
-  
+
+  Graph.prototype.edgeSize =  function() {
+    return this.edges.length;
+  };
+
   Graph.prototype.addNode =  function(nodeName) {
-  	var node = new Node(nodeName);
+  	var node = new JSAlgorithms.Node(nodeName);
   	this.nodes.push(node)
   
   	return node
   };
+
+  Graph.prototype.addEdge = function(nodeName1, nodeName2) {
+    var node1 = this.getNode(nodeName1);
+    var node2 = this.getNode(nodeName2);
+
+    if ( this.directed ) {
+      var edge = new JSAlgorithms.directedEdge(node1, node2);
+    } else {
+      var edge = new JSAlgorithms.Edge(node1, node2);
+    }
+
+    this.edges.push(edge);
+    node1.edges.push(edge);
+    node2.edges.push(edge);
   
+    return edge;
+  };
+
+  Graph.prototype.mustBeUndirectional = function() {
+    if ( this.directed ) {
+      throw "error: function called on a directed graph; currently unsupported"
+    }
+  };
+
+  Graph.prototype.mustBeDirectional = function() {
+    if ( !this.directed ) {
+      throw "error: function called on an undirected graph; currently unsupported"
+    }
+  };
+
   Graph.prototype.getNode = function(nodeName) {
   	var nodeOut
   	this.nodes.forEach(function(node) {
@@ -31,18 +64,7 @@
   	})
   	return nodeOut;
   }
-  
-  Graph.prototype.addEdge = function(nodeName1, nodeName2) {
-  	var node1 = this.getNode(nodeName1);
-  	var node2 = this.getNode(nodeName2);
-  	var edge = new Edge(node1, node2);
-  	this.edges.push(edge);
-  	node1.edges.push(edge);
-  	node2.edges.push(edge);
-  
-  	return edge;
-  };
-  
+
   Graph.prototype.getEdge = function(nodeName1, nodeName2) {
   	var edgeOut
   	var node1 = this.getNode(nodeName1);
@@ -58,6 +80,7 @@
   }
   
   Graph.prototype.BFS = function(startNodeName, targetNodeName) {
+    this.mustBeUndirectional();
   	var startNode = this.getNode(startNodeName);
   	startNode.explored = true;
   	var queue = [ startNode ];
@@ -84,6 +107,7 @@
   }
   
   Graph.prototype.shortestPath = function(startName, targetName) {
+    this.mustBeUndirectional();
   	this.setUnexplored();
   	var startNode = this.getNode(startName);
   	startNode.dist = 0;
@@ -107,6 +131,7 @@
   }
   
   Graph.prototype.connectedComponents = function(nodeName) {
+    this.mustBeUndirectional();
   	this.setUnexplored();
   	this.BFS(nodeName, "DummyName");
   	var connected = this.nodes.filter(function(node) {
@@ -116,7 +141,7 @@
   }
 })();
 
-g = new JSAlgorithms.Graph();
+g = new JSAlgorithms.Graph({ directed: true });
 g.addNode("S");
 g.addNode("A");
 g.addNode("B");
