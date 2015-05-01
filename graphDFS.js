@@ -55,14 +55,69 @@
     }
   };
 
+  Graph.prototype.DFSKasaraju = function(node, options) {
+      node.explored = true;
+      node.leader = this.currentSourceNode.name;
+
+      if ( options.reversed ) {
+          var neighbors = node.reverseNeighbors();
+      } else {
+          var neighbors = node.neighborNodes();
+      }
+
+      var unexploredNeighbors = neighbors.filter(function(node) {
+          return !node.explored;
+      });
+
+      unexploredNeighbors.forEach(function(node) {
+          this.DFSKasaraju(node, options);
+      }, this);
+
+      if ( options.reversed ) {
+          this.finishingTime += 1;
+          node.finishingTime = this.finishingTime;
+      }
+  };
+
+  Graph.prototype.getNodeByFinishingTime = function(t) {
+  	var targetNode;
+    this.nodes.forEach(function(node) {
+      if ( node.finishingTime === t ) targetNode = node;
+    });
+    return targetNode;
+  };
+
+  Graph.prototype.resetFinishingTimes = function(){
+      this.nodes.forEach(function(node) {
+          node.finishingTime = null;
+      });
+  };
+
+  Graph.prototype.DFSLoop = function( options ) {
+    this.finishingTime = 0;
+    var n = this.nodeSize();
+
+    for (var i = n; i > 0; i--) {
+        if ( options.ordered ) {
+            var node = this.getNodeByFinishingTime(i)
+        } else {
+            var node = this.getNode(i);
+        }
+
+        if ( !node.explored ) {
+          this.currentSourceNode = node;
+          this.DFSKasaraju(node, { reversed: options.reversed });
+        }
+    }
+  };
+
   Graph.prototype.topologicalSort = function() {
   	this.mustBeDirectional();
   	this.setUnexplored();
+  	this.resetFinishingTimes();
   	this.currentLabel = this.nodeSize();
 
-  	// outer for-loop through all nodes
   	this.nodes.forEach(function(node){
-  		// if node is unexplored
   		if ( !node.explored ) this.DFSTopoSort(node);
   	}, this);
 
@@ -70,14 +125,38 @@
   };
 
   Graph.prototype.DFSTopoSort = function(startNode) {
-  	// mark startNode explored
   	startNode.explored = true;
-  	// for every neighbor, 
   	startNode.neighborNodes().forEach(function(node) {
   		if ( !node.explored ) this.DFSTopoSort(node);
   	}, this);
 
     startNode.currentLabel = this.currentLabel;
     this.currentLabel--
+  };
+
+  Graph.prototype.Kasaraju = function() {
+    this.setUnexplored();
+    this.DFSLoop({ reversed: true,
+                   ordered: false });
+    this.DFSLoop({ reversed: false,
+                   ordered: true });
+    return 
   }
 })();
+
+g2 = new JSAlgorithms.Graph({ directed: true });
+
+for (var i = 1; i < 10; i++) {
+    g2.addNode(i);
+}
+
+g2.addEdge(7, 1);
+g2.addEdge(4, 1);
+g2.addEdge(7, 9);
+g2.addEdge(9, 6);
+g2.addEdge(6, 3);
+g2.addEdge(3, 9);
+g2.addEdge(6, 8);
+g2.addEdge(8, 2);
+g2.addEdge(2, 5);
+g2.addEdge(5, 8);

@@ -27,4 +27,16 @@
   
   	return nodes;
   };
+
+  Node.prototype.reverseNeighbors = function(){
+    var reversedNeighbors = [];
+
+    this.edges.forEach(function(edge){
+      if ( edge.nodes[1] === this ) {
+        reversedNeighbors.push(edge.nodes[0]);
+      }
+    }, this);
+    
+    return reversedNeighbors;
+  }
 })();
