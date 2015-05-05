@@ -141,39 +141,6 @@
   }
 })();
 
-// g = new JSAlgorithms.Graph({ directed: true });
-// g.addNode("S");
-// g.addNode("A");
-// g.addNode("B");
-// g.addNode("C");
-// g.addNode("D");
-// g.addNode("E");
-
-// g.addNode("F");
-// g.addNode("G");
-
-// g.addEdge("S", "B");
-// g.addEdge("S", "A");
-// g.addEdge("A", "C");
-// g.addEdge("A", "B");
-// g.addEdge("B", "C");
-// g.addEdge("B", "D");
-// g.addEdge("C", "D");
-// g.addEdge("C", "E");
-// g.addEdge("D", "E");
-// g.addEdge("F", "G");
-
-// g1 = new JSAlgorithms.Graph({ directed: true });
-
-// g1.addNode("S");
-// g1.addNode("A");
-// g1.addNode("B");
-// g1.addNode("C");
-
-// g1.addEdge("S", "A");
-// g1.addEdge("S", "B");
-// g1.addEdge("B", "C");
-// g1.addEdge("A", "C");
 
 
 

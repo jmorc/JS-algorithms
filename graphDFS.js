@@ -55,9 +55,37 @@
     }
   };
 
+  Graph.prototype.Kasaraju = function() {
+    this.setUnexplored();
+    this.DFSLoop({ reversed: true,
+                   ordered: false });
+    this.setUnexplored();
+    this.DFSLoop({ reversed: false,
+                   ordered: true });
+    return 
+  }
+
+  Graph.prototype.DFSLoop = function( options ) {
+    this.finishingTime = 0;
+    var n = this.nodeSize();
+
+    for (var i = n; i > 0; i--) {
+        if ( options.ordered ) {
+            var node = this.getNodeByFinishingTime(i)
+        } else {
+            var node = this.getNode(i);
+        };
+
+        if ( !node.explored ) {
+          this.currentSourceNode = node.name;
+          this.DFSKasaraju(node, { reversed: options.reversed });
+        }
+    }
+  };
+
   Graph.prototype.DFSKasaraju = function(node, options) {
       node.explored = true;
-      node.leader = this.currentSourceNode.name;
+      node.leader = this.currentSourceNode;
 
       if ( options.reversed ) {
           var neighbors = node.reverseNeighbors();
@@ -93,24 +121,6 @@
       });
   };
 
-  Graph.prototype.DFSLoop = function( options ) {
-    this.finishingTime = 0;
-    var n = this.nodeSize();
-
-    for (var i = n; i > 0; i--) {
-        if ( options.ordered ) {
-            var node = this.getNodeByFinishingTime(i)
-        } else {
-            var node = this.getNode(i);
-        }
-
-        if ( !node.explored ) {
-          this.currentSourceNode = node;
-          this.DFSKasaraju(node, { reversed: options.reversed });
-        }
-    }
-  };
-
   Graph.prototype.topologicalSort = function() {
   	this.mustBeDirectional();
   	this.setUnexplored();
@@ -134,14 +144,6 @@
     this.currentLabel--
   };
 
-  Graph.prototype.Kasaraju = function() {
-    this.setUnexplored();
-    this.DFSLoop({ reversed: true,
-                   ordered: false });
-    this.DFSLoop({ reversed: false,
-                   ordered: true });
-    return 
-  }
 })();
 
 g2 = new JSAlgorithms.Graph({ directed: true });
@@ -150,13 +152,14 @@ for (var i = 1; i < 10; i++) {
     g2.addNode(i);
 }
 
-g2.addEdge(7, 1);
-g2.addEdge(4, 1);
-g2.addEdge(7, 9);
-g2.addEdge(9, 6);
-g2.addEdge(6, 3);
-g2.addEdge(3, 9);
-g2.addEdge(6, 8);
-g2.addEdge(8, 2);
-g2.addEdge(2, 5);
-g2.addEdge(5, 8);
+g2.addEdge(1, 7);
+g2.addEdge(1, 4);
+g2.addEdge(9, 7);
+g2.addEdge(4, 7);
+g2.addEdge(6, 9);
+g2.addEdge(3, 6);
+g2.addEdge(9, 3);
+g2.addEdge(8, 6);
+g2.addEdge(2, 8);
+g2.addEdge(5, 2);
+g2.addEdge(8, 5);
